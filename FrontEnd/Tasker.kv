@@ -1,0 +1,25 @@
+<MainForm>:
+    connect_button: connect_btn
+    info_label: info_lbl
+    close_button: close_btn
+    GridLayout:
+        size: root.width / 2, root.height
+        pos: (root.width / 2) - (self.width / 2), root.height - self.height
+        rows: 3
+        cols: 1
+        padding: self.height / 16
+        spacing: self.height / 16
+        Button:
+            id: connect_btn
+            text: "Connect"
+            font_size: "18"
+            on_touch_down: root.connect()
+
+        Label:
+            id: info_lbl
+            text: "Test"
+
+        Button:
+            id: close_btn
+            text: "Close"
+            font_size: "18"

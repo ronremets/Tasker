@@ -1,0 +1,3 @@
+title=Tasker
+author=Ron Remets
+orientation=portrait
