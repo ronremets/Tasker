@@ -23,3 +23,36 @@
             id: close_btn
             text: "Close"
             font_size: "18"
+
+<LoginForm>:
+    _username_input: username
+    _password_input: password
+    _login_button: login_btn
+    _signup_button: signup_btn
+    GridLayout:
+        size: root.width / 2, root.height
+        pos: (root.width / 2) - (self.width / 2), root.height - self.height
+        rows: 4
+        cols: 1
+        padding: self.height / 16
+        spacing: self.height / 16
+        TextInput:
+            id: username
+        TextInput:
+            id: password
+        Button:
+            id: login_btn
+            text: "Login"
+            on_press: root.login(username.text, password.text)
+        Button:
+            id: signup_btn
+            text: "Signup"
+            on_press: root.signup(username.text, password.text, "A user")
+
+<LoginPopup@Popup>:
+    dismiss_button: dis
+    auto_dismiss: False
+    Button:
+        id: dis
+        text: root.text
+        on_release: root.dismiss()

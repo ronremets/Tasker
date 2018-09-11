@@ -5,7 +5,7 @@ main form
 import socket
 from kivy.uix.widget import Widget
 from kivy.properties import ObjectProperty
-from command import Command
+from tools.command import Command
 __author__ = "Ron Remets"
 
 
@@ -13,9 +13,13 @@ class MainForm(Widget):
     """
     main form
     """
-    connect_button = ObjectProperty(None)
-    info_label = ObjectProperty(None)
-    close_button = ObjectProperty(None)
+
+    def __init__(self, client):
+        super(MainForm, self).__init__()
+        self._connect_button = ObjectProperty(None)
+        self._info_label = ObjectProperty(None)
+        self._close_button = ObjectProperty(None)
+        self._client = client
 
     def connect(self):
         client = socket.socket()

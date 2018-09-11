@@ -52,7 +52,8 @@ class Command(object):
         args = dict()
         args["command"] = text[:text.index('?')]
         for arg in text[text.index('?') + 1:].split('&'):
-            args[arg[:arg.index('=')]] = arg[arg.index('=') + 1:]
+            if '=' in arg:
+                args[arg[:arg.index('=')]] = arg[arg.index('=') + 1:]
         return args
 
     @staticmethod

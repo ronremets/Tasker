@@ -3,12 +3,12 @@
 this will manage everything to do with the backEnd
 TODO: add better description
 """
-import sys
-from user import User
-from task import Task
+from tools.user import User
+from tools.task import Task
+from tools.command import Command
 from database import Database
 from server import Server
-from command import Command
+
 
 __author__ = "Ron Remets"
 SERVER_IP = "0.0.0.0"
@@ -31,13 +31,16 @@ class BackEnd(object):
             command = Command(raw_command)
             print("\nCommand:\n" + str(command))
             command_output = self._execute(command)
-            self._server.write(command_output)
+            if Command(command_output)["command"] != "close":
+                self._server.write(command_output)
+            else:
+                break
 
     def close(self):
         self._database.close()
 
     def _execute(self, command):
-        output = ""
+        output = "unknown command"
         if command["command"] == "signup":
             output = repr(self._signup(command))
         elif command["command"] == "login":
@@ -46,6 +49,12 @@ class BackEnd(object):
             output = repr(self._add_task(command))
         elif command["command"] == "get task":
             output = repr(self._get_all_tasks(command))
+        elif command["command"] == "delete task":
+            output = repr(self._get_all_tasks(command))
+        elif command["command"] == "close":
+            self._database.close()
+            self._server.close()
+            output = "close?"
         return output
 
     def _signup(self, args):
@@ -54,6 +63,7 @@ class BackEnd(object):
         info = args["info"]
         user = User(username, password, info)
         self._database.add_user(user)
+        self._database.save()
         return Command("end?error=0")
 
     def _login(self, args):
@@ -70,6 +80,7 @@ class BackEnd(object):
                 args["dst_username"],
                 args["complete"])
             self._database.add_task(task)
+            self._database.save()
             return Command("end?error=0")
         else:
             return Command("end?error=1")
@@ -83,18 +94,28 @@ class BackEnd(object):
         else:
             return Command("end?error=1")
 
+    def _delete_task(self, args):
+        if self._login(args)["error"] == '0':
+            user = self._database.get_user(args["username"], args["password"])
+            task = self._database.get_task(user, args["id"], src=True)
+            self._database.delete_task(user, task.get_id())
+            self._database.save()
+            return Command("end?error=0")
+        else:
+            return Command("end?error=1")
 
-b = None
-try:
-    b = BackEnd(":memory:", SERVER_IP, SERVER_PORT)
-    b.run()
-except Exception as e:
-    if b is not None:
-        b.close()
-    raise
-"""
-signup?username=ronremets&password=12345&info=me
-login?username=ronremets&password=12345
-add task?username=ronremets&password=12345&name=clean2&description=clean2 the house&deadline=now&add task?name=clean&description=clean the house&deadline=now&dst_username=nirremets&complete=False
-get task?username=ronremets&password=12345&src=True
-"""
+
+def main():
+    b = None
+    try:
+        b = BackEnd(":memory:", SERVER_IP, SERVER_PORT)
+        b.run()
+    except Exception:
+        if b is not None:
+            print("Closing socket...")
+            b.close()
+        raise
+
+
+if __name__ == "__main__":
+    main()

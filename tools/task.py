@@ -16,16 +16,19 @@ class Task(object):
                  deadline,
                  src_username,
                  dst_username,
-                 complete):
+                 complete,
+                 task_id='0'):
         self._name = name
         self._description = description
         self._deadline = deadline
         self._src_username = src_username
         self._dst_username = dst_username
         self._complete = complete
+        self._id = task_id
 
     def __str__(self):
             return """\
+id = {}
 name = {}
 description = {}
 deadline = {}
@@ -33,12 +36,16 @@ src_username = {}
 dst_username = {}
 complete = {}
 """.format(
+                self._id,
                 self._name,
                 self._description,
                 self._deadline,
                 self._src_username,
                 self._dst_username,
                 self._complete)
+
+    def get_id(self):
+        return self._id
 
     def get_name(self):
         return self._name
